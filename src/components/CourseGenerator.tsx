@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Sprout, Rocket, Zap, Sparkles, BookOpen, Target, Star, Brain, GraduationCap } from 'lucide-react';
 import type { Course } from './index';
 import { useUser } from '@clerk/clerk-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 interface CourseGeneratorProps {
   onCourseCreated: (course: Course) => void;
@@ -22,7 +22,7 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
         setIsLoading(true);
         setError(null);
         try {
-            const response = await axios.post<Course>(`${process.env.VITE_BACKEND_URL}/api/generate-course`, { 
+            const response = await api.post<Course>(`/generate-course`, { 
                 topic, 
                 level,
                 userId: clerkUser.id 

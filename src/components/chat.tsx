@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, X } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 import type { ChatMessage } from './index';
 
 interface ChatbotProps {
@@ -27,7 +27,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
     setIsLoading(true); 
     
     try { 
-      const response = await axios.post<{ reply: string }>(`${process.env.VITE_BACKEND_URL}/api/chat`, { 
+      const response = await api.post<{ reply: string }>(`/chat`, { 
         message: input, 
         history: messages 
       }); 

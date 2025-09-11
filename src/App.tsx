@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import axios from 'axios';
+import { api } from './lib/api';
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react';
 import { 
   ModernDashboard, 
@@ -25,7 +25,7 @@ import { BookmarkProvider } from './contexts/BookmarkContext';
 
 
 // --- Environment Variable Setup for Vite ---
-const FRONTEND_GEMINI_API_KEY = process.env.VITE_GEMINI_API_KEY;
+const FRONTEND_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // --- LOGO MAP ---
 const topicLogoMap: { [key: string]: string } = {
@@ -82,7 +82,7 @@ const LearnSphereApp: React.FC = () => {
     // Function to load user XP data from backend
     const loadUserXP = async (userId: string) => {
         try {
-            const response = await axios.get(`${process.env.VITE_BACKEND_URL}/api/xp/${userId}`);
+            const response = await api.get(`/xp/${userId}`);
             const xpData = response.data as {
                 totalXP: number;
                 currentLevel: number;
@@ -141,7 +141,7 @@ const LearnSphereApp: React.FC = () => {
         setIsLoading(true);
         setFetchError(null);
         try {
-            const response = await axios.get<Course[]>(`${process.env.VITE_BACKEND_URL}/api/courses?userId=${clerkUser.id}`);
+            const response = await api.get<Course[]>(`/courses?userId=${clerkUser.id}`);
             const initialCourses = response.data.map(c => ({ 
                 ...c, 
                 id: c._id || c.id, 
@@ -170,7 +170,7 @@ const LearnSphereApp: React.FC = () => {
         if (!clerkUser?.id) return;
         
         try {
-            await axios.delete(`${process.env.VITE_BACKEND_URL}/api/courses/${courseId}?userId=${clerkUser.id}`);
+            await api.delete(`/courses/${courseId}?userId=${clerkUser.id}`);
             
             // Remove the course from the local state
             setCourses(prev => prev.filter(course => course.id !== courseId));
@@ -212,7 +212,7 @@ const LearnSphereApp: React.FC = () => {
             }));
         } else {
             // Add XP for lesson completion via backend
-            await axios.post('learn-sphere-backend-eight.vercel.app/api/lesson/complete', {
+            await api.post(`/lesson/complete`, {
                 userId: clerkUser.id,
                 lessonId: `${courseId}_${chapterIndex}_${lessonIndex}`,
                 courseId: courseId,

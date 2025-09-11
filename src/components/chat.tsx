@@ -27,7 +27,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
     setIsLoading(true); 
     
     try { 
-      const response = await axios.post<{ reply: string }>(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, { 
+      const response = await axios.post<{ reply: string }>(`${process.env.VITE_BACKEND_URL}/api/chat`, { 
         message: input, 
         history: messages 
       }); 

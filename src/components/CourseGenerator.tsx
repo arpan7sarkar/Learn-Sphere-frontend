@@ -22,7 +22,7 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
         setIsLoading(true);
         setError(null);
         try {
-            const response = await axios.post<Course>(`${import.meta.env.VITE_BACKEND_URL}/api/generate-course`, { 
+            const response = await axios.post<Course>(`${process.env.VITE_BACKEND_URL}/api/generate-course`, { 
                 topic, 
                 level,
                 userId: clerkUser.id 

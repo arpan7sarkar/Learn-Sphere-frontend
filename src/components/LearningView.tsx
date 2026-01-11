@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, CheckCircle, PartyPopper } from 'lucide-react';
 import type { Course, QuizResult, QuizProgress } from './index';
-import { api } from '../lib/api';
+import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
 
 interface QuizCompletionResponse {
@@ -74,6 +74,7 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
     
     const handleSubmitQuiz = async () => {
         if (!activeLesson || !currentLesson || !currentLesson.quiz || !clerkUser) return;
+        
         setIsSubmittingQuiz(true);
         const quiz = currentLesson.quiz;
         let correct = 0;
@@ -81,7 +82,7 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
         quiz.questions.forEach((q, i) => { if (answers[i] === q.correctAnswer) { correct++; } });
         
         try {
-            const response = await api.post<QuizCompletionResponse>(`/quiz/complete`, {
+            const response = await axios.post<QuizCompletionResponse>('https://learn-sphere-backend-v2.vercel.app/api/quiz/complete', {
                 userId: clerkUser.id,
                 courseId: course.id,
                 chapterIndex: activeLesson.chap,
@@ -129,7 +130,7 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
         
         setIsRegeneratingQuiz(true);
         try {
-            await api.post(`/quiz/regenerate`, {
+            await axios.post('https://learn-sphere-backend-v2.vercel.app/api/quiz/regenerate', {
                 userId: clerkUser.id,
                 courseId: course.id,
                 chapterIndex: activeLesson.chap,

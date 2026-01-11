@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Sprout, Rocket, Zap, Sparkles, BookOpen, Target, Star, Brain, GraduationCap } from 'lucide-react';
 import type { Course } from './index';
 import { useUser } from '@clerk/clerk-react';
-import { api } from '../lib/api';
+import axios from 'axios';
 
 interface CourseGeneratorProps {
   onCourseCreated: (course: Course) => void;
@@ -22,7 +22,7 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.post<Course>(`/generate-course`, { 
+            const response = await axios.post<Course>('https://learn-sphere-backend-v2.vercel.app/api/generate-course', { 
                 topic, 
                 level,
                 userId: clerkUser.id 

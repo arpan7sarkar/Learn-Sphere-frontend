@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { api } from './lib/api';
+import axios from 'axios';
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react';
 import { 
   ModernDashboard, 
@@ -82,7 +82,7 @@ const LearnSphereApp: React.FC = () => {
     // Function to load user XP data from backend
     const loadUserXP = async (userId: string) => {
         try {
-            const response = await api.get(`/xp/${userId}`);
+            const response = await axios.get(`https://learn-sphere-backend-v2.vercel.app/api/xp/${userId}`);
             const xpData = response.data as {
                 totalXP: number;
                 currentLevel: number;
@@ -141,7 +141,7 @@ const LearnSphereApp: React.FC = () => {
         setIsLoading(true);
         setFetchError(null);
         try {
-            const response = await api.get<Course[]>(`/courses?userId=${clerkUser.id}`);
+            const response = await axios.get<Course[]>(`https://learn-sphere-backend-v2.vercel.app/api/courses?userId=${clerkUser.id}`);
             const initialCourses = response.data.map(c => ({ 
                 ...c, 
                 id: c._id || c.id, 
@@ -170,7 +170,7 @@ const LearnSphereApp: React.FC = () => {
         if (!clerkUser?.id) return;
         
         try {
-            await api.delete(`/courses/${courseId}?userId=${clerkUser.id}`);
+            await axios.delete(`https://learn-sphere-backend-v2.vercel.app/api/courses/${courseId}?userId=${clerkUser.id}`);
             
             // Remove the course from the local state
             setCourses(prev => prev.filter(course => course.id !== courseId));
@@ -212,7 +212,7 @@ const LearnSphereApp: React.FC = () => {
             }));
         } else {
             // Add XP for lesson completion via backend
-            await api.post(`/lesson/complete`, {
+            await axios.post('https://learn-sphere-backend-v2.vercel.app/api/lesson/complete', {
                 userId: clerkUser.id,
                 lessonId: `${courseId}_${chapterIndex}_${lessonIndex}`,
                 courseId: courseId,

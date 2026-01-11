@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, X } from 'lucide-react';
-import { api } from '../lib/api';
+import axios from 'axios';
 import type { ChatMessage } from './index';
 
 interface ChatbotProps {
@@ -27,7 +27,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
     setIsLoading(true); 
     
     try { 
-      const response = await api.post<{ reply: string }>(`/chat`, { 
+      const response = await axios.post<{ reply: string }>('https://learn-sphere-backend-v2.vercel.app/api/chat', { 
         message: input, 
         history: messages 
       }); 
